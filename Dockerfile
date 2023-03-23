@@ -33,7 +33,7 @@ RUN set -ex; \
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN wget -qO- https://deb.nodesource.com/setup_18.x | bash; \
-    apt-get install -y nodejs; \
+    apt-get install -y nodejs curl git; \
     npm i -g npm@latest; \
     apt-get -y remove wget; \
     apt-get -y --purge autoremove; \

@@ -1,4 +1,4 @@
-FROM ubuntu:focal AS builder
+FROM ghcr.io/linuxserver/baseimage-ubuntu:focal AS builder
 
 ENV NODE_ENV="production"
 
@@ -50,7 +50,7 @@ COPY package-lock.json /usr/src/app
 RUN npm ci --omit=dev; \
     chown -R root:root /usr/src/app;
 
-FROM ubuntu:focal AS final
+FROM ghcr.io/linuxserver/baseimage-ubuntu:focal AS final
 
 ENV \
     NODE_ENV="production" \
@@ -60,7 +60,7 @@ ENV \
 RUN set -ex; \
     export DEBIAN_FRONTEND=noninteractive; \
     groupadd -r node; \
-    useradd -r -g node node; \
+    useradd -r -g 1000 node; \
     apt-get -qq update; \
     apt-get -y --no-install-recommends install \
       ca-certificates \
@@ -95,13 +95,13 @@ COPY --from=builder /usr/src/app /usr/src/app
 
 COPY . /usr/src/app
 
-RUN mkdir -p /data && chown node:node /data
+RUN mkdir -p /data && chown 1000:node /data
 VOLUME /data
 WORKDIR /data
 
 EXPOSE 8080
 
-USER node:node
+USER 1000:node
 
 ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
 
